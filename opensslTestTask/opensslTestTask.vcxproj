@@ -121,12 +121,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>E:\OpenSSL3.0\OpenSSL-Win64\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>E:\OpenSSL3.0\OpenSSL-Win64\lib;E:\OpenSSL3.0\OpenSSL-Win64\lib\VC;E:\OpenSSL3.0\OpenSSL-Win64\lib\VC\static</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;capi.lib;dasync.lib;ec_internal_test.lib;legacy.lib;libapps.lib;libcommon.lib;libcrypto.lib;libcrypto_static.lib;libdefault.lib;liblegacy.lib;libssl.lib;libssl_static.lib;libtestutil.lib;loader_attic.lib;openssl.lib;ossltest.lib;p_test.lib;padlock.lib;libcrypto64MD.lib;libcrypto64MDd.lib;libcrypto64MT.lib;libcrypto64MTd.lib;libssl64MD.lib;libssl64MDd.lib;libssl64MT.lib;libssl64MTd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

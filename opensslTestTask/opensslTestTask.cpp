@@ -196,6 +196,6 @@ int main() {
     VerifySignature(pkey, hash_value, signature, sign_len);
     free(signature);
     FreeResource(pkey);
-
+    cin.get();
     return 0;
 }
