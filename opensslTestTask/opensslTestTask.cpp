@@ -53,20 +53,20 @@ void PrintKeysToConsole(EVP_PKEY* pkey) {
     PrintPrivateKey(pkey);
 }
 
-void freeResource(EVP_PKEY* pkey) {
+void FreeResource(EVP_PKEY* pkey) {
     EVP_PKEY_free(pkey);
     EVP_cleanup();
 }
 
 void CheckCtxInit(EVP_PKEY_CTX* ctx, EVP_PKEY* pkey) {
     if (!ctx) {
-        freeResource(pkey);
+        FreeResource(pkey);
         cout << "Error during context creation" << endl;
         return;
     }
 }
 
-void PrintEncypted(unsigned char* encrypted_user_input, size_t encrypted_len) {
+void PrintEncrypted(unsigned char* encrypted_user_input, size_t encrypted_len) {
     cout << "Encrypted data: " << endl;
     for (size_t i = 0; i < encrypted_len; i++) {
         printf("%02X", encrypted_user_input[i]);
@@ -90,13 +90,13 @@ pair<unsigned char*, size_t> EncryptData(string user_input, EVP_PKEY* pkey, cons
         cout << "Error during encryption" << endl;
         free(encrypted_user_input);
         EVP_PKEY_CTX_free(ctx);
-        freeResource(pkey);
+        FreeResource(pkey);
         pair<unsigned char*, size_t> error;
         error.first = NULL;
         error.second = NULL;
         return error;
     }
-    PrintEncypted(encrypted_user_input, encrypted_len);
+    PrintEncrypted(encrypted_user_input, encrypted_len);
     EVP_PKEY_CTX_free(ctx);
     pair<unsigned char*, size_t> result;
     result.first = encrypted_user_input;
@@ -113,7 +113,7 @@ void DecryptData(EVP_PKEY* pkey, unsigned char* encrypted_user_input, size_t enc
         cout << "Error during decryption" << endl;
         EVP_PKEY_CTX_free(ctx);
         free(decrypted_message);
-        freeResource(pkey);
+        FreeResource(pkey);
         return;
     }
     PrintDecrypted(decrypted_message, decrypted_len);
@@ -195,7 +195,7 @@ int main() {
     unsigned int sign_len = MakeSignature(pkey, hash_value, signature);
     VerifySignature(pkey, hash_value, signature, sign_len);
     free(signature);
-    freeResource(pkey);
+    FreeResource(pkey);
 
     return 0;
 }
