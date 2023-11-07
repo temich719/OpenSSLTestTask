@@ -32,7 +32,7 @@ void PrintPubKey(EVP_PKEY* pkey) {
     BIO* pub_out = BIO_new(BIO_s_mem());
     PEM_write_bio_PUBKEY(pub_out, pkey);
     char* pub_key_str = nullptr;
-    long pub_key_len = BIO_get_mem_data(pub_out, &pub_key_str);//????
+    long pub_key_len = BIO_get_mem_data(pub_out, &pub_key_str); 
     cout << "Public Key:" << endl;
     cout.write(pub_key_str, pub_key_len);
     BIO_free(pub_out);
@@ -58,12 +58,13 @@ void FreeResource(EVP_PKEY* pkey) {
     EVP_cleanup();
 }
 
-void CheckCtxInit(EVP_PKEY_CTX* ctx, EVP_PKEY* pkey) {
+bool CheckCtxInit(EVP_PKEY_CTX* ctx, EVP_PKEY* pkey) {
+    bool isCtxInitialized = true;
     if (!ctx) {
-        FreeResource(pkey);
         cout << "Error during context creation" << endl;
-        return;
+        isCtxInitialized = false;
     }
+    return isCtxInitialized;
 }
 
 void PrintEncrypted(unsigned char* encrypted_user_input, size_t encrypted_len) {
@@ -84,8 +85,8 @@ pair<unsigned char*, size_t> EncryptData(string user_input, EVP_PKEY* pkey, cons
     unsigned char* encrypted_user_input = (unsigned char*)malloc(EVP_PKEY_size(pkey));
     size_t encrypted_len;
     EVP_PKEY_CTX* ctx = EVP_PKEY_CTX_new(pkey, NULL);
-    CheckCtxInit(ctx, pkey);
-    if (EVP_PKEY_encrypt_init(ctx) <= 0 || 
+    if (!CheckCtxInit(ctx, pkey) || 
+        EVP_PKEY_encrypt_init(ctx) <= 0 ||
         EVP_PKEY_encrypt(ctx, encrypted_user_input, &encrypted_len, user_input_data, user_input_len) <= 0) {
         cout << "Error during encryption" << endl;
         free(encrypted_user_input);
@@ -106,10 +107,11 @@ pair<unsigned char*, size_t> EncryptData(string user_input, EVP_PKEY* pkey, cons
 
 void DecryptData(EVP_PKEY* pkey, unsigned char* encrypted_user_input, size_t encrypted_len) {
     EVP_PKEY_CTX* ctx = EVP_PKEY_CTX_new(pkey, NULL);
-    CheckCtxInit(ctx, pkey);
     unsigned char* decrypted_message = (unsigned char*)malloc(EVP_PKEY_size(pkey));
     size_t decrypted_len;
-    if (EVP_PKEY_decrypt_init(ctx) <= 0 || EVP_PKEY_decrypt(ctx, decrypted_message, &decrypted_len, encrypted_user_input, encrypted_len) <= 0) {
+    if (!CheckCtxInit(ctx, pkey) || 
+        EVP_PKEY_decrypt_init(ctx) <= 0 ||
+        EVP_PKEY_decrypt(ctx, decrypted_message, &decrypted_len, encrypted_user_input, encrypted_len) <= 0) {
         cout << "Error during decryption" << endl;
         EVP_PKEY_CTX_free(ctx);
         free(decrypted_message);
@@ -170,6 +172,11 @@ void VerifySignature(EVP_PKEY* pkey, unsigned char* hash_value, unsigned char* s
     }
 }
 
+void Exit() {
+    cout << "Press any button for exit." << endl;
+    cin.get();
+}
+
 
 int main() {
     OpenSSL_add_all_algorithms();
@@ -196,6 +203,6 @@ int main() {
     VerifySignature(pkey, hash_value, signature, sign_len);
     free(signature);
     FreeResource(pkey);
-    cin.get();
+    Exit();
     return 0;
 }
